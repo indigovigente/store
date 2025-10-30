@@ -11,4 +11,9 @@ export class UserRepository {
     async findAll(): Promise<CreateUserDto[]> {
         return this.users;
     }
+
+    async doesTheEmailAddressExist(mail: string) {
+        const likelyUser = this.users.find(user => user.mail === mail);
+        return likelyUser !== undefined;
+    }
 }
