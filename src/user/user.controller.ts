@@ -1,7 +1,8 @@
 import {Body, Controller, Post, Get } from "@nestjs/common";
 import { UserRepository } from "./user.repository";
 import { UserEntity } from "./user.entity";
-import { CreateUserDto } from "./dto/createUser.dto";
+import { CreateUserDto } from "./dto/CreateUser.dto";
+import { ListUserDto } from "./dto/ListUser.dto";
 
 
 @Controller("/users")
@@ -21,12 +22,25 @@ export class UserController {
        this.userRepository.save(userEntity);
         return {
             message: "User created successfully",
-            id: userEntity.id
+            user: new ListUserDto(
+                userEntity.id,
+                userEntity.name,
+                userEntity.mail
+            )
         }
     }
 
     @Get()
-    async getAllUsers(): Promise<UserEntity[]>{
-        return this.userRepository.findAll();
+    async getAllUsers(): Promise<ListUserDto[]>{
+        const savedUsers =  this.userRepository.findAll()
+        const usersList = (await savedUsers).map(user => {
+            return new ListUserDto(
+                user.id,
+                user.name,
+                user.mail
+            )
+        })
+        return usersList;       
+        
     }
 }
