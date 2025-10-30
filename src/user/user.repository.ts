@@ -19,10 +19,7 @@ export class UserRepository {
     }
 
     async update(id: string, dataToUpdateUser: Partial<UserEntity>) {
-        const userToBeUpdated = this.users.find(user => user.id === id);
-        if(!userToBeUpdated) {
-          throw new Error("User does not exist!");
-        }
+        const userToBeUpdated = this.findIndexById(id);
         
         Object.entries(dataToUpdateUser).forEach(([key, value]) => {
             if(key == 'id'){
@@ -35,5 +32,20 @@ export class UserRepository {
         });
         return userToBeUpdated;
         
+    }
+
+    private findIndexById(id: string) {
+        const likelyUser = this.users.find(user => user.id === id);
+        if(!likelyUser) {
+          throw new Error("User does not exist!");
+        }
+
+        return likelyUser;
+    }
+
+    async delete(id: string) {
+        const userToBeDeleted = this.findIndexById(id);
+        this.users = this.users.filter(user => user.id !== id);
+        return userToBeDeleted;
     }
 }
